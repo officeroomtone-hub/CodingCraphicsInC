@@ -103,7 +103,6 @@ SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
         put_pixel(i, j, colors[0]);
       }
     }
-    put_pixel(WIDTH/2, HEIGHT/2, 0xFF0000);
 
     /* Copy the contents of the framebuffer to the texture */
     SDL_UpdateTexture (
