@@ -49,7 +49,7 @@ int main(void){
     HEIGHT * 4,
     0
   );
-
+  // error handling on window creation
   if( window == NULL) {
     printf("SDL_CreateWindow failed, %s", SDL_GetError());
     return EXIT_FAILURE;
@@ -59,7 +59,7 @@ int main(void){
     window,
     NULL
   );
-
+  //error handling on renderer creation
   if( renderer == NULL) {
     printf("SDL_CreateRenderer failed, %s", SDL_GetError());
     SDL_DestroyRenderer(renderer);
@@ -73,30 +73,34 @@ int main(void){
     WIDTH,
     HEIGHT
   );
-
-SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
+  //error handling on texture creation
   if( texture == NULL) {
     printf("SDL_CreateRenderer failed, %s", SDL_GetError());
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(texture);
     return EXIT_FAILURE;
   }
+  //scaling method
+  SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
+
 
   uint8_t is_running = 1;
 
+  // start up live framebuffer calculation
   while(is_running){
 
     uint64_t start = SDL_GetPerformanceCounter();
 
+    // function for exiting the programm and savely shutting down the program
     while(SDL_PollEvent(&event)){
       if(event.type == SDL_EVENT_QUIT){
         is_running = 0;
       }
     }
 
-
-
+    // clear each pixel using a specified color
     clear(0x2A2A2A);
+    
     // draw pixel content to framebuffer array
     for ( int i = 0; i < WIDTH; i++) {
       for ( int j = 0; j < HEIGHT; j++) {
@@ -124,6 +128,7 @@ SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
     }
   }
 
+  // kill all running SDL processes upon leaving the loop
   SDL_DestroyTexture(texture);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
