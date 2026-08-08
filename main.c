@@ -1,28 +1,29 @@
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 
-#define WIDTH 320
-#define HEIGHT 200
+#define WIDTH 800 
+#define HEIGHT 600
+
+#define SDL_FLAGS (SDL_INIT_VIDEO | SDL_INIT_AUDIO) 
+
+struct Program {
+  SDL_Window *window;
+  SDL_Renderer *renderer;
+};
+
 
 uint32_t framebuffer[WIDTH * HEIGHT];
 
-void put_pixel (int x, int y, uint32_t color) {
-  if (x < 0 || x >= WIDTH|| y < 0 || y >= HEIGHT) {
-    return;
-  }
-  framebuffer[WIDTH * y + x] = color;
-}
+void clear( uint32_t);
+void put_pixel (int x, int y, uint32_t color);
+bool program_init_sdl();
+void program_free ();
 
-void clear (uint32_t color){
-  for (int i = 0; i < WIDTH * HEIGHT; i++){
- framebuffer[i] = color;
-  }
-}
-
-
-  int colors[] = {
+uint32_t colors[] = {
   0xFF0000, 0x00FF00, 
   0x0000FF,0xFFFF00,
   0x00FFFF, 0x000000,
@@ -37,28 +38,21 @@ int main(void){
 
   const double frame_target = 1.0 / 60;
 
-  if (!SDL_Init(SDL_INIT_VIDEO)){
-    fprintf(stderr, "SDL Init failed: %s", SDL_GetError());
-    int status = EXIT_FAILURE;
-    return status;
+  int Xit_status = EXIT_FAILURE;
+
+  if (program_init_sdl()) {
+    Xit_status = EXIT_SUCCESS;
+    return Xit_status;
   }
 
-  window = SDL_CreateWindow(
-    "SDL Framebuffer",
-    WIDTH * 4,
-    HEIGHT * 4,
-    0
-  );
+  window = SDL_CreateWindow("SDL Framebuffer",WIDTH,HEIGHT,0);
 
   if( window == NULL) {
     printf("SDL_CreateWindow failed, %s", SDL_GetError());
     return EXIT_FAILURE;
   }
 
-  renderer = SDL_CreateRenderer(
-    window,
-    NULL
-  );
+  renderer = SDL_CreateRenderer(window, NULL);
 
   if( renderer == NULL) {
     printf("SDL_CreateRenderer failed, %s", SDL_GetError());
@@ -74,7 +68,6 @@ int main(void){
     HEIGHT
   );
 
-SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
   if( texture == NULL) {
     printf("SDL_CreateRenderer failed, %s", SDL_GetError());
     SDL_DestroyRenderer(renderer);
@@ -128,9 +121,30 @@ SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
 
-  SDL_Quit();
+  program_free();
 
+  return Xit_status;
+}
+
+bool program_init_sdl(){  if (!SDL_Init(SDL_FLAGS)){
+    fprintf(stderr, "SDL Init failed: %s", SDL_GetError());
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
 
+void clear (uint32_t color){
+  for (int i = 0; i < WIDTH * HEIGHT; i++){
+ framebuffer[i] = color;
+  }
+}
 
+
+void put_pixel (int x, int y, uint32_t color) {
+  if (x < 0 || x >= WIDTH|| y < 0 || y >= HEIGHT) {
+    return;
+  }
+  framebuffer[WIDTH * y + x] = color;
+}
+
+void program_free(){ SDL_Quit(); }
