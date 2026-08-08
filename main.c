@@ -5,16 +5,17 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define WIDTH 800 
+#define WIDTH 800
 #define HEIGHT 600
 
-#define SDL_FLAGS (SDL_INIT_VIDEO | SDL_INIT_AUDIO) 
+#define SDL_FLAGS (SDL_INIT_VIDEO | SDL_INIT_AUDIO)
 
-struct Program {
+#define WINDOW_TITLE "Open Window"
+
+typedef struct {
   SDL_Window *window;
   SDL_Renderer *renderer;
-};
-
+} program;
 
 uint32_t framebuffer[WIDTH * HEIGHT];
 
@@ -45,7 +46,7 @@ int main(void){
     return Xit_status;
   }
 
-  window = SDL_CreateWindow("SDL Framebuffer",WIDTH,HEIGHT,0);
+  window = SDL_CreateWindow(WINDOW_TITLE, WIDTH, HEIGHT, 0);
 
   if( window == NULL) {
     printf("SDL_CreateWindow failed, %s", SDL_GetError());
@@ -86,8 +87,6 @@ int main(void){
         is_running = 0;
       }
     }
-
-
 
     clear(0x2A2A2A);
     // draw pixel content to framebuffer array
@@ -138,7 +137,6 @@ void clear (uint32_t color){
  framebuffer[i] = color;
   }
 }
-
 
 void put_pixel (int x, int y, uint32_t color) {
   if (x < 0 || x >= WIDTH|| y < 0 || y >= HEIGHT) {
